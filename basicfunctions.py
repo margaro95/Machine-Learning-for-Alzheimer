@@ -1,6 +1,9 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 """This module defines basic changing directory functions and reading files."""
-from scipy import io
 from os import chdir
+
+from scipy import io
 
 
 def readdata(archivo):

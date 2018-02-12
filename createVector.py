@@ -1,5 +1,8 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 """This module creates the basic input vector for the ML algorithm."""
 from numpy import triu, ones
+
 from basicfunctions import readdata
 
 
