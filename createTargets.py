@@ -11,8 +11,8 @@ def createTargets_DCLvsControl():
     used to generate the targets for the QSM vs Control case, being QSM = [0]
     and Control = [1].
     """
-    target0 = zeros((30))
-    target1 = ones((29))
+    target0 = zeros((30*9))
+    target1 = ones((29*9))
     target = concatenate((target0, target1))
     return(target)
 
@@ -22,8 +22,8 @@ def createTargets_DCLvsControlandQSM():
 
     DCL will be marked as [0] and Control & QSM as a [1].
     """
-    target0 = zeros((30))
-    target1 = ones((59))
+    target0 = zeros((30*9))
+    target1 = ones((59*9))
     target = concatenate((target0, target1))
     return(target)
 
@@ -33,8 +33,8 @@ def createTargets_DCLandQSMvsControl():
 
     DCL & QSM will be marked as [0] and Control as a [1].
     """
-    target0 = zeros((60))
-    target1 = ones((29))
+    target0 = zeros((60*9))
+    target1 = ones((29*9))
     target = concatenate((target0, target1))
     return(target)
 
@@ -44,9 +44,9 @@ def createTargets_DCLvsQSMvsControl():
 
     DCL will be marked as [0], QSM as a [1] and Control as a [2].
     """
-    target0 = zeros((30))
-    target1 = ones((30))
-    target2 = ones((29)) + 1
+    target0 = zeros((30*9))
+    target1 = ones((30*9))
+    target2 = ones((29*9)) + 1
     target = concatenate((target0, target1, target2))
     return(target)
 
@@ -56,7 +56,7 @@ def createTargets_DCLvsQSM():
 
     DCL will be marked as [0] and QSM as a [1].
     """
-    target0 = zeros((30))
-    target1 = ones((30))
+    target0 = zeros((30*9))
+    target1 = ones((30*9))
     target = concatenate((target0, target1))
     return(target)
