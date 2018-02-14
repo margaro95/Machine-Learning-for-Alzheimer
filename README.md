@@ -151,3 +151,12 @@ UMEC; que indica solo la base de datos de procedencia a efectos internos
 del lab.
 
    Un abrazo
+
+#COMENTARIO DE RESULTADOS
+Entrenar el modelo con todas las bandas de una vez y luego pedirle que te
+clasifique el test mostrándole una sola banda no es buena idea. Se consiguen
+scores del 0.59.
+Es mejor idea entrenar el modelo solo con bandas de un tipo en particular y
+luego pedirle que te clasifique el test que mostrándole una banda de ese tipo
+en particular. Haciendo esto con la banda Gamma (6) se obtiene un score del
+0.73.

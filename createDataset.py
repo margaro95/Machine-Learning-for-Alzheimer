@@ -42,36 +42,78 @@ def createDataset():
     return(dataset)
 
 
-def addaptDataset(src_dataset, Ningroup, nfeatures, configuration):
+def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
     """Addapts the size of the dataset for different classification tasks.
 
     Function inputs:
 
         - src_dataset: ndarray with samples in rows and features in columns.
-        - Ningroup: nd array. number of samples in each group.
+        - Ningroup: nd array. number of samples in each group NOT PATIENTS.
                     Groups are DCL, QSM and Control, not patients.
         - nfeatures: number of features (columns) per sample (patient)
-        - configuration: choose 0 if its the DCL vs Control case, 1 if its
-                         DCl vs QSM and 2 if its QSM vs Control (TODO ->
-                         develop more configurations.)
-        For example: addaptDataset(full_dataset,array([9*30,9*30,9*29]),4005,0)
-        gives the dataset for the DCL vs Control case.
+        - configuration: choose 1 if it's the DCL vs Control case, 2 if it's
+                         DCl vs QSM and 3 if its QSM vs Control. 10 if it's
+                         Delta DCL vs Delta Control, 11 if it's Theta DCL vs
+                         Theta Control, and so on. 20 if it is Delta DCL vs
+                         Delta QSM, 22 if it is Alpha DCL vs Alpha QSM, and so
+                         on; and 33 if it is Beta1 QSM vs Beta1 Control...
+                         You get the idea...
+                         Check createVector.__doc__ for more information on how
+                         are the bands ordered.
+        For example:
+                addaptDataset(full_dataset,array([9*30,9*30,9*29]),4005,1,9)
+                gives the dataset for the DCL vs Control case.
     """
-    if configuration == 0:
+    if configuration == 1:
         group1 = arange(Ningroup[0])
         group3 = arange(Ningroup[0]+Ningroup[1],
                         Ningroup[0]+Ningroup[1]+Ningroup[2])
         dataset = src_dataset[concatenate((group1, group3))[:, newaxis],
                               arange(nfeatures)]
-    elif configuration == 1:
+
+    elif configuration == 2:
         group1 = arange(Ningroup[0])
         group2 = arange(Ningroup[0], Ningroup[0]+Ningroup[1])
         dataset = src_dataset[concatenate((group1, group2))[:, newaxis],
                               arange(nfeatures)]
-    elif configuration == 2:
+
+    elif configuration == 3:
         group2 = arange(Ningroup[0], Ningroup[0]+Ningroup[1])
         group3 = arange(Ningroup[0]+Ningroup[1],
                         Ningroup[0]+Ningroup[1]+Ningroup[2])
         dataset = src_dataset[concatenate((group1, group2))[:, newaxis],
                               arange(nfeatures)]
+
+    elif configuration in range(10, 19):
+        band_choice1 = [configuration % 10 + nbands * i
+                        for i in range(Ningroup[0] // nbands)]
+        band_choice3 = [configuration % 10 + nbands * i
+                        for i in range(Ningroup[2] // nbands)]
+        group1 = arange(Ningroup[0])[band_choice1]
+        group3 = arange(Ningroup[0]+Ningroup[1],
+                        Ningroup[0]+Ningroup[1]+Ningroup[2])[band_choice3]
+        dataset = src_dataset[concatenate((group1, group3))[:, newaxis],
+                              arange(nfeatures)]
+
+    elif configuration in range(20, 29):
+        band_choice1 = [configuration % 20 + nbands * i
+                        for i in range(Ningroup[0] // nbands)]
+        band_choice2 = [configuration % 20 + nbands * i
+                        for i in range(Ningroup[1] // nbands)]
+        group1 = arange(Ningroup[0])[band_choice1]
+        group2 = arange(Ningroup[0], Ningroup[0]+Ningroup[1])[band_choice2]
+        dataset = src_dataset[concatenate((group1, group2))[:, newaxis],
+                              arange(nfeatures)]
+
+    elif configuration in range(30, 39):
+        band_choice2 = [configuration % 30 + nbands * i
+                        for i in range(Ningroup[1] // nbands)]
+        band_choice3 = [configuration % 30 + nbands * i
+                        for i in range(Ningroup[2] // nbands)]
+        group2 = arange(Ningroup[0], Ningroup[0]+Ningroup[1])[band_choice2]
+        group3 = arange(Ningroup[0]+Ningroup[1],
+                        Ningroup[0]+Ningroup[1]+Ningroup[2])[band_choice3]
+        dataset = src_dataset[concatenate((group2, group3))[:, newaxis],
+                              arange(nfeatures)]
+
     return(dataset)
