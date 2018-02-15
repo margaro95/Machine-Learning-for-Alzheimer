@@ -3,11 +3,13 @@
 """This module implements the classification."""
 from sklearn import linear_model
 from sklearn.model_selection import KFold
-from numpy import ones
+from sklearn.metrics import roc_curve, auc
+from numpy import ones, asarray
+import matplotlib.pyplot as plt
 
 
 def run_crossvalidation(func):
-    """Decorate your classificator to run the crossvalidation.
+    """Decorate your classifier to run the crossvalidation.
 
     The wrapper asks the user how many samples belong to one patient in order
     to make all the samples belonging to one patient constitute the test data.
@@ -19,16 +21,35 @@ def run_crossvalidation(func):
         splits = int(input("How many patients are in the dataset?\n"))
         kf = KFold(n_splits=splits)
         scores = []
+        y_test = []
+        y_score = []
         print("This samples ------------------------------ are predicted this")
         for train_index, test_index in kf.split(dataset):
-            (prediction, scored) = func(dataset[train_index],
-                                        targets[train_index],
-                                        dataset[test_index],
-                                        targets[test_index])
+            (prediction, scored, decision) = func(dataset[train_index],
+                                                  targets[train_index],
+                                                  dataset[test_index],
+                                                  targets[test_index])
             scores.append(scored)
+            y_test.append(targets[test_index][0])
+            y_score.append(decision[0])
             print(str(test_index) + " - " + str(prediction)+" - " +
                   "Scored " + str(scored))
         final_score = list(scores > ones(splits)*0.5).count(True) / splits
+        fpr, tpr, thresholds = roc_curve(asarray(y_test), asarray(y_score))
+        roc_auc = auc(fpr, tpr)
+        plt.figure()
+        lw = 2
+        clasificador = str(input("What classifier is this?\n"))
+        plt.plot(fpr, tpr, color='darkorange',
+                 lw=lw, label=clasificador+' ROC curve, AUC = %0.2f' % roc_auc)
+        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC curve for the {} classifier'.format(clasificador))
+        plt.legend(loc="lower right")
+        plt.show()
         return final_score
     return func_wrapper
 
@@ -40,4 +61,5 @@ def classify_logistic(train_dataset, train_targets, test_dataset, test_target):
     modelo.fit(train_dataset, train_targets)
     prediction = modelo.predict(test_dataset)
     scored = modelo.score(test_dataset, test_target)
-    return(prediction, scored)
+    decision = modelo.decision_function(test_dataset)
+    return(prediction, scored, decision)
