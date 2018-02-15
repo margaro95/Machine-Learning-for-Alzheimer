@@ -81,7 +81,7 @@ def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
         group2 = arange(Ningroup[0], Ningroup[0]+Ningroup[1])
         group3 = arange(Ningroup[0]+Ningroup[1],
                         Ningroup[0]+Ningroup[1]+Ningroup[2])
-        dataset = src_dataset[concatenate((group1, group2))[:, newaxis],
+        dataset = src_dataset[concatenate((group2, group3))[:, newaxis],
                               arange(nfeatures)]
 
     elif configuration in range(10, 19):

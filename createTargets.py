@@ -78,6 +78,6 @@ def createTargets_DCLvsQSM(Ningroup, configuration, nbands):
         band_choice2 = [configuration % 20 + nbands * i
                         for i in range(Ningroup[1] // nbands)]
         target0 = zeros((Ningroup[0]))[band_choice1]
-        target1 = ones((Ningroup[2]))[band_choice2]
+        target1 = ones((Ningroup[1]))[band_choice2]
         target = concatenate((target0, target1))
         return(target)
