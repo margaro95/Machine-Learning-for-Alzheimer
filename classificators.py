@@ -4,7 +4,7 @@
 from sklearn import linear_model
 from sklearn.model_selection import KFold
 from sklearn.metrics import roc_curve, auc
-from numpy import ones, asarray
+from numpy import ones, array
 import matplotlib.pyplot as plt
 
 
@@ -16,7 +16,10 @@ def run_crossvalidation_with_ROC(func):
     The output of the function (final_score) is not obtained doing a mean of
     all scores. It is the factor given by the number of patients who scored
     more than 0.5 divided by the total number of patients.
-    This decorator also plots the ROC curve for the classifier
+    This decorator also plots the ROC curve for the classifier.
+
+    The ROC curve is best explained here:
+    https://ifisc.uib-csic.es/media/publications/publication/YSaJSPqST-2EdKQ1O2_-Nw.pdf
     """
     def func_wrapper(dataset, targets):
         splits = int(input("How many patients are in the dataset?\n"))
@@ -31,12 +34,14 @@ def run_crossvalidation_with_ROC(func):
                                                   dataset[test_index],
                                                   targets[test_index])
             scores.append(scored)
-            y_test.append(targets[test_index][0])
-            y_score.append(decision[0])
+            y_test.append(list(targets[test_index]))
+            y_score.append(list(decision))
             print(str(test_index) + " - " + str(prediction)+" - " +
                   "Scored " + str(scored))
+        y_test = list(array(y_test).ravel())
+        y_score = list(array(y_score).ravel())
         final_score = list(scores > ones(splits)*0.5).count(True) / splits
-        fpr, tpr, thresholds = roc_curve(asarray(y_test), asarray(y_score))
+        fpr, tpr, thresholds = roc_curve(array(y_test), array(y_score))
         roc_auc = auc(fpr, tpr)
         plt.figure()
         lw = 2
