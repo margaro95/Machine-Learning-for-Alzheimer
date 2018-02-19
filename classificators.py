@@ -29,13 +29,13 @@ def run_crossvalidation_with_ROC(func):
         y_score = []
         print("This samples ------------------------------ are predicted this")
         for train_index, test_index in kf.split(dataset):
-            (prediction, scored, decision) = func(dataset[train_index],
-                                                  targets[train_index],
-                                                  dataset[test_index],
-                                                  targets[test_index])
+            (prediction, scored, probas) = func(dataset[train_index],
+                                                targets[train_index],
+                                                dataset[test_index],
+                                                targets[test_index])
             scores.append(scored)
             y_test.append(list(targets[test_index]))
-            y_score.append(list(decision))
+            y_score.append(list(probas[:, 1]))
             print(str(test_index) + " - " + str(prediction)+" - " +
                   "Scored " + str(scored))
         y_test = list(array(y_test).ravel())
@@ -68,5 +68,5 @@ def classify_logistic(train_dataset, train_targets, test_dataset, test_target):
     modelo.fit(train_dataset, train_targets)
     prediction = modelo.predict(test_dataset)
     scored = modelo.score(test_dataset, test_target)
-    decision = modelo.decision_function(test_dataset)
-    return(prediction, scored, decision)
+    probas = modelo.predict_proba(test_dataset)
+    return(prediction, scored, probas)
