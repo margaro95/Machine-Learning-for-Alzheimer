@@ -10,8 +10,11 @@ from createDataset import*
 from createTargets import*
 from createVector import*
 from classificators import*
+import pdb
 dataset = load("dataset_alzheimer.npy")
 dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 16, 9)
+dataset = nonlinear_expand(dataset, 1500, None)
 targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 16, 9)
-final_score = classify_logistic(dataset, targets)
+#pdb.set_trace()
+final_score = classify_pseudoinverse(dataset, targets)
 print(final_score)

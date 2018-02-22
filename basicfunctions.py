@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """This module defines basic changing directory functions and reading files."""
 from os import chdir
-
 from scipy import io
+from numpy.random import seed
 
 
 def readdata(archivo):
@@ -30,3 +30,13 @@ def toControl():
 def toProjectFolder():
     """Change directory to project folder."""
     chdir("/media/marcos/Datos/Atom_Git_Projects/Machine Learning for Alzheimer")
+
+
+def set_seed(Seed=None):
+    """Set seed for random generators to custom value or to random value."""
+    if Seed is None:
+        from time import time
+        Seed = int((time() * 10 ** 6) % 4294967295)
+        seed(Seed)
+    else:
+        seed(Seed)

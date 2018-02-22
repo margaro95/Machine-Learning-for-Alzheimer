@@ -117,3 +117,29 @@ def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
                               arange(nfeatures)]
 
     return(dataset)
+
+
+def nonlinear_expand(src_dataset, n_out, seed, width=0.75, lag=1.25):
+    """Expand your dataset nonlinearly.
+
+    Uses the non-linearity tanh(x) on a RNN to expand the data.
+    You can select the dimensionality of the output dataset.
+    The lag is where you want to place the mean of the activation values.
+    The width is the amplitude of 2*std(activation) you want the activations to
+    have.
+    """
+    from numpy import matmul, size, tanh, std, mean, histogram
+    from numpy.random import rand
+    from basicfunctions import set_seed
+    from sklearn.preprocessing import normalize
+    import pdb
+    set_seed(seed)
+    input_weights = rand(size(src_dataset, 1), n_out)
+    #pdb.set_trace()
+    src_dataset = normalize(src_dataset)
+    #pdb.set_trace()
+    activation = matmul(src_dataset, input_weights)
+    width = width / std(activation)
+    activation = (activation - mean(activation)) * width + lag
+    new_dataset = tanh(activation)
+    return new_dataset

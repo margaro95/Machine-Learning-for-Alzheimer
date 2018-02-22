@@ -1,11 +1,13 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """This module implements the classification."""
-from sklearn import linear_model
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import KFold
 from sklearn.metrics import roc_curve, auc
 from numpy import ones, array
 import matplotlib.pyplot as plt
+
+from classification_models import PseudoInverseRegression
 
 
 def run_crossvalidation_with_ROC(func):
@@ -64,7 +66,19 @@ def run_crossvalidation_with_ROC(func):
 @run_crossvalidation_with_ROC
 def classify_logistic(train_dataset, train_targets, test_dataset, test_target):
     """Classify test via trained logistic regression model."""
-    modelo = linear_model.LogisticRegression()
+    modelo = LogisticRegression()
+    modelo.fit(train_dataset, train_targets)
+    prediction = modelo.predict(test_dataset)
+    scored = modelo.score(test_dataset, test_target)
+    probas = modelo.predict_proba(test_dataset)
+    return(prediction, scored, probas)
+
+
+@run_crossvalidation_with_ROC
+def classify_pseudoinverse(train_dataset, train_targets, test_dataset,
+                           test_target):
+    """Classify test via trained Moore-Penrose pseudoinverse of state."""
+    modelo = PseudoInverseRegression()
     modelo.fit(train_dataset, train_targets)
     prediction = modelo.predict(test_dataset)
     scored = modelo.score(test_dataset, test_target)
