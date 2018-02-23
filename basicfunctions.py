@@ -37,6 +37,8 @@ def set_seed(Seed=None):
     if Seed is None:
         from time import time
         Seed = int((time() * 10 ** 6) % 4294967295)
+        print("This is your seed in case you want to replicate "
+              "results\n"+str(Seed))
         seed(Seed)
     else:
         seed(Seed)

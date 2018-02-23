@@ -119,27 +119,33 @@ def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
     return(dataset)
 
 
-def nonlinear_expand(src_dataset, n_out, seed, width=0.75, lag=1.25):
+def nonlinear_expand(src_dataset, n_out, seed, input_scaling=1, bias=0.25):
     """Expand your dataset nonlinearly.
 
     Uses the non-linearity tanh(x) on a RNN to expand the data.
     You can select the dimensionality of the output dataset.
     The lag is where you want to place the mean of the activation values.
-    The width is the amplitude of 2*std(activation) you want the activations to
+    The width is the value of 2*std(activation) you want the activations to
     have.
+
+    These seeds work fine with our dataset:
+    3406697521 input_scaling=1, bias=-1 -> AUC = 0.78 for DCLvsControl
     """
     from numpy import matmul, size, tanh, std, mean, histogram
-    from numpy.random import rand
+    # from numpy.random import rand
     from basicfunctions import set_seed
-    from sklearn.preprocessing import normalize
+    from scipy.sparse import rand
+    # from sklearn.preprocessing import normalize
     import pdb
+
     set_seed(seed)
-    input_weights = rand(size(src_dataset, 1), n_out)
-    #pdb.set_trace()
-    src_dataset = normalize(src_dataset)
-    #pdb.set_trace()
+    input_weights = rand(size(src_dataset, 1), n_out, density=50)
+    pdb.set_trace()
+    # src_dataset = normalize(src_dataset)
     activation = matmul(src_dataset, input_weights)
-    width = width / std(activation)
-    activation = (activation - mean(activation)) * width + lag
+    input_scaling = input_scaling / std(activation)
+    activation = (activation - mean(activation)) * input_scaling + bias
+    # nodes_variety = rand(size(activation, 0), size(activation, 1))
     new_dataset = tanh(activation)
+    #                  nodes_variety / mean(nodes_variety) * activation)
     return new_dataset
