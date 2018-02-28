@@ -11,10 +11,11 @@ from createTargets import*
 from createVector import*
 from classificators import*
 import pdb
+
+g = {"bias": -3, "input_scaling": 2.61111111}
 dataset = load("dataset_alzheimer.npy")
 dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 16, 9)
-dataset = nonlinear_expand(dataset, 1500, None)
+(dataset, Seed) = nonlinear_expand(dataset, 200, None, g)
 targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 16, 9)
-# pdb.set_trace()
-final_score = classify_pseudoinverse(dataset, targets)
-print(final_score)
+(final_score, roc_auc) = classify_pseudoinverse(dataset, targets)
+print(final_score, roc_auc)

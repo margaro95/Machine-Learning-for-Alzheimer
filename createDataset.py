@@ -119,33 +119,38 @@ def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
     return(dataset)
 
 
-def nonlinear_expand(src_dataset, n_out, seed, input_scaling=1, bias=0.25):
+def nonlinear_expand(src_dataset, n_out, seed, g):
     """Expand your dataset nonlinearly.
 
     Uses the non-linearity tanh(x) on a RNN to expand the data.
     You can select the dimensionality of the output dataset.
-    The lag is where you want to place the mean of the activation values.
-    The width is the value of 2*std(activation) you want the activations to
+    The bias is where you want to place the mean of the rsrvr_input values.
+    The input_scaling is the value of 2*std(rsrvr_input) you want the inputs to
     have.
+    You can specify a density for the input weights. Density equal to one means
+    a full matrix, density of 0 means a matrix with no non-zero items.
 
     These seeds work fine with our dataset:
     3406697521 input_scaling=1, bias=-1 -> AUC = 0.78 for DCLvsControl
     """
-    from numpy import matmul, size, tanh, std, mean, histogram
+    from numpy import matmul, size, tanh, std, mean, array  # , histogram
     # from numpy.random import rand
     from basicfunctions import set_seed
     from scipy.sparse import rand
     # from sklearn.preprocessing import normalize
-    import pdb
+    # import pdb
 
-    set_seed(seed)
-    input_weights = rand(size(src_dataset, 1), n_out, density=50)
-    pdb.set_trace()
+    Seed = set_seed(seed)
+    bias = g["bias"]
+    input_scaling = g["input_scaling"]
+
+    input_weights = rand(size(src_dataset, 1), n_out, density=0.5)
+    # pdb.set_trace()
     # src_dataset = normalize(src_dataset)
-    activation = matmul(src_dataset, input_weights)
-    input_scaling = input_scaling / std(activation)
-    activation = (activation - mean(activation)) * input_scaling + bias
-    # nodes_variety = rand(size(activation, 0), size(activation, 1))
-    new_dataset = tanh(activation)
-    #                  nodes_variety / mean(nodes_variety) * activation)
-    return new_dataset
+    rsrvr_input = matmul(src_dataset, array(input_weights.todense()))
+    input_scaling = input_scaling / std(rsrvr_input)
+    rsrvr_input = (rsrvr_input - mean(rsrvr_input)) * input_scaling + bias
+    # nodes_variety = rand(size(rsrvr_input, 0), size(rsrvr_input, 1))
+    new_dataset = tanh(rsrvr_input)
+    #                  nodes_variety / mean(nodes_variety) * rsrvr_input)
+    return (new_dataset, Seed)

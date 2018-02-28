@@ -14,31 +14,39 @@ def readdata(archivo):
 
 def toDCL():
     """Change directory to DCL folder."""
-    chdir("/media/marcos/Seagate Expansion Drive/IFISC/alzheimer_ml/conectividad fuentes/DCL")
+    chdir("/media/marcos/Seagate Expansion Drive/IFISC/alzheimer_ml/"
+          "conectividad fuentes/DCL")
 
 
 def toQSM():
     """Change directory to QSM folder."""
-    chdir("/media/marcos/Seagate Expansion Drive/IFISC/alzheimer_ml/conectividad fuentes/QSM")
+    chdir("/media/marcos/Seagate Expansion Drive/IFISC/alzheimer_ml/"
+          "conectividad fuentes/QSM")
 
 
 def toControl():
     """Change directory to NoQSM (aka, "Control") folder."""
-    chdir("/media/marcos/Seagate Expansion Drive/IFISC/alzheimer_ml/conectividad fuentes/No QSM")
+    chdir("/media/marcos/Seagate Expansion Drive/IFISC/alzheimer_ml/"
+          "conectividad fuentes/No QSM")
 
 
 def toProjectFolder():
     """Change directory to project folder."""
-    chdir("/media/marcos/Datos/Atom_Git_Projects/Machine Learning for Alzheimer")
+    chdir("/media/marcos/Datos/Atom_Git_Projects/"
+          "Machine Learning for Alzheimer")
 
 
 def set_seed(Seed=None):
     """Set seed for random generators to custom value or to random value."""
     if Seed is None:
         from time import time
-        Seed = int((time() * 10 ** 6) % 4294967295)
+        Seed = int((time() * 10 ** 6) % 1234567)
         print("This is your seed in case you want to replicate "
               "results\n"+str(Seed))
         seed(Seed)
+        return Seed
     else:
+        print("This is your seed in case you want to replicate "
+              "results\n"+str(Seed))
         seed(Seed)
+        return Seed

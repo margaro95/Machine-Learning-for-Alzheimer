@@ -24,7 +24,8 @@ def run_crossvalidation_with_ROC(func):
     https://ifisc.uib-csic.es/media/publications/publication/YSaJSPqST-2EdKQ1O2_-Nw.pdf
     """
     def func_wrapper(dataset, targets):
-        splits = int(input("How many patients are in the dataset?\n"))
+        # splits = int(input("How many patients are in the dataset?\n"))
+        splits = 59
         kf = KFold(n_splits=splits)
         scores = []
         y_test = []
@@ -45,21 +46,21 @@ def run_crossvalidation_with_ROC(func):
         final_score = list(scores > ones(splits)*0.5).count(True) / splits
         fpr, tpr, thresholds = roc_curve(array(y_test), array(y_score))
         roc_auc = auc(fpr, tpr)
-        plt.figure()
-        lw = 2
-        a = str(input("What classifier is this?\n"))
-        b = str(input("What classifying task is this?\n"))
-        plt.plot(fpr, tpr, color='darkorange',
-                 lw=lw, label=a + ' ROC curve, AUC = %0.2f' % roc_auc)
-        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('ROC curve for the {0} classifier on {1}'.format(a, b))
-        plt.legend(loc="lower right")
-        plt.show()
-        return final_score
+        # plt.figure()
+        # lw = 2
+        # a = str(input("What classifier is this?\n"))
+        # b = str(input("What classifying task is this?\n"))
+        # plt.plot(fpr, tpr, color='darkorange',
+                 # lw=lw, label=a + ' ROC curve, AUC = %0.2f' % roc_auc)
+        # plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        # plt.xlim([0.0, 1.0])
+        # plt.ylim([0.0, 1.05])
+        # plt.xlabel('False Positive Rate')
+        # plt.ylabel('True Positive Rate')
+        # plt.title('ROC curve for the {0} classifier on {1}'.format(a, b))
+        # plt.legend(loc="lower right")
+        # plt.show()
+        return (final_score, roc_auc)
     return func_wrapper
 
 
