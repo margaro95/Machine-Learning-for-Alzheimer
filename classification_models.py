@@ -17,8 +17,6 @@ class PseudoInverseRegression(LinearClassifierMixin):
 
     def fit(self, X, y):
         """Fit your data and create the output vector."""
-        import pdb
-        #pdb.set_trace()
         bias = ones((size(X, 0), 1))
         X = hstack((bias, X))
         W = dot(pinv(X), y)

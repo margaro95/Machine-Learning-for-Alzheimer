@@ -13,25 +13,22 @@ from numpy import (load, array, vstack, hstack, linspace,
 from createDataset import nonlinear_expand, addaptDataset
 from createTargets import createTargets_DCLvsControl
 from classificators import classify_pseudoinverse  # , classify_logistic
-# import pdb
 
 dataset = load("dataset_alzheimer.npy")
 src_dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 16, 9)
 targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 16, 9)
 
 ##########################################################################
-# dataset = load("dataset_alzheimer.npy")
-# dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 2, 9)
+# src_dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 2, 9)
 # targets = createTargets_DCLvsQSM(array([30*9, 30*9, 29*9]), 2, 9)
 
-# dataset = load("dataset_alzheimer.npy")
-# dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 38, 9)
+# src_dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 38, 9)
 # targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 18, 9)
 ##########################################################################
 
-grid = {"bias": linspace(-3, 3, 10), "input_scaling": linspace(0.01, 2.5, 10)}
+#grid = {"bias": linspace(-3, -1, 10), "input_scaling": linspace(0.001, 1, 10)}
 # "density": arange(0.1, 1, 0.1), "nodes": arange(25, 2000)}
-
+grid = {"bias": array([-2 - 7/9]), "input_scaling": array([0.5])}
 point_grids = ParameterGrid(grid)
 # HACK: Isn't really a better way to make a stack of arrays to an empty array?
 seeds_log = auc_log = zeros(100)
@@ -46,10 +43,8 @@ for g in point_grids:
         auc_log_in_g = hstack((auc_log_in_g, roc_auc))
         print(roc_auc)
         i += 1
-    # pdb.set_trace()
     seeds_log = vstack((seeds_log, seeds_log_in_g))
     auc_log = vstack((auc_log, auc_log_in_g))
-    # pdb.set_trace()
 save("seeds_log.npy", seeds_log)
 save("auc_log.npy", auc_log)
 median_auc_log = median(auc_log, axis=1)

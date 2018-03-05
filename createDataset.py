@@ -144,7 +144,7 @@ def nonlinear_expand(src_dataset, n_out, seed, g):
     bias = g["bias"]
     input_scaling = g["input_scaling"]
 
-    input_weights = rand(size(src_dataset, 1), n_out, density=0.5)
+    input_weights = rand(size(src_dataset, 1), n_out, density=0.75)
     # pdb.set_trace()
     # src_dataset = normalize(src_dataset)
     rsrvr_input = matmul(src_dataset, array(input_weights.todense()))
