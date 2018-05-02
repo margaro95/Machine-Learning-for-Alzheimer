@@ -5,10 +5,10 @@ from os import listdir
 from numpy import asarray, concatenate, arange, newaxis
 
 from basicfunctions import toDCL, toQSM, toControl
-from createVector import createVector
+from createVector import createVector, createVector_ernesto
 
 
-def createDataset():
+def createDataset(ernesto=False):
     """Create the dataset for the ML algorithm.
 
     Every row constitutes a sample with features as columns. The first 30 rows
@@ -26,17 +26,26 @@ def createDataset():
     dataset = []
     for i in range(len(listdir())):
         for j in range(nbands):
-            dataset.append(list(createVector(listdir()[i], j)))
+            if ernesto:
+                dataset.append(list(createVector_ernesto(listdir()[i], j)))
+            else:
+                dataset.append(list(createVector(listdir()[i], j)))
 
     toQSM()
     for i in range(len(listdir())):
         for j in range(nbands):
-            dataset.append(list(createVector(listdir()[i], j)))
+            if ernesto:
+                dataset.append(list(createVector_ernesto(listdir()[i], j)))
+            else:
+                dataset.append(list(createVector(listdir()[i], j)))
 
     toControl()
     for i in range(len(listdir())):
         for j in range(nbands):
-            dataset.append(list(createVector(listdir()[i], j)))
+            if ernesto:
+                dataset.append(list(createVector_ernesto(listdir()[i], j)))
+            else:
+                dataset.append(list(createVector(listdir()[i], j)))
 
     dataset = asarray(dataset)
     return(dataset)
@@ -119,7 +128,7 @@ def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
     return(dataset)
 
 
-def nonlinear_expand(src_dataset, n_out, seed, g):
+def nonlinear_expand(src_dataset, seed, g):
     """Expand your dataset nonlinearly.
 
     Uses the non-linearity tanh(x) on a RNN to expand the data.
@@ -143,8 +152,10 @@ def nonlinear_expand(src_dataset, n_out, seed, g):
     Seed = set_seed(seed)
     bias = g["bias"]
     input_scaling = g["input_scaling"]
+    density = g["density"]
+    n_out = g["nodes"]
 
-    input_weights = rand(size(src_dataset, 1), n_out, density=0.75)
+    input_weights = rand(size(src_dataset, 1), n_out, density=density)
     # pdb.set_trace()
     # src_dataset = normalize(src_dataset)
     rsrvr_input = matmul(src_dataset, array(input_weights.todense()))
@@ -154,3 +165,15 @@ def nonlinear_expand(src_dataset, n_out, seed, g):
     new_dataset = tanh(rsrvr_input)
     #                  nodes_variety / mean(nodes_variety) * rsrvr_input)
     return (new_dataset, Seed)
+
+
+def random_subspace(src_dataset):
+    """Extract a random subspace from original dataset."""
+    from numpy import delete, size, sort
+    from numpy.random import choice
+
+    len = size(src_dataset, 1)
+    space = arange(len)
+    dlted_subspace = space[sort(choice(space, int(len/3.5), replace=False))]
+    new_dataset = delete(src_dataset, dlted_subspace, 1)
+    return (new_dataset)

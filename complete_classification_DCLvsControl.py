@@ -5,17 +5,24 @@
 This is just a silly script to automate the task of launching the complete
 classification of DCL vs Control for Gamma band (configuration 16).
 """
-from numpy import*
-from createDataset import*
-from createTargets import*
-from createVector import*
-from classificators import*
+import numpy as np
+from createDataset import *
+from createTargets import *
+from createVector import *
+from classificators import *
+from sklearn.decomposition import PCA
 import pdb
 
-g = {"bias": -2 - 7/9, "input_scaling": 0.5}
-targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 16, 9)
-dataset = load("dataset_alzheimer.npy")
-dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 16, 9)
-(dataset, Seed) = nonlinear_expand(dataset, 1000, None, g)
-(final_score, roc_auc) = classify_pseudoinverse(dataset, targets)
+g = {"bias": array([-2 - 7/9]), "input_scaling": array([0.5]),
+     "density": 0.75, "nodes": 1000}
+# g = {"bias": array([0]), "input_scaling": array([0.631578947]),
+     # "density": 0.75, "nodes": 5000}
+targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 18, 9)
+dataset = np.load("dataset_alzheimer.npy")
+dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 18, 9)
+# dataset = dataset - np.mean(dataset, axis=0)
+# pca = PCA()
+# dataset = pca.fit(dataset).transform(dataset)
+# (dataset, Seed) = nonlinear_expand(dataset, None, g)
+(final_score, roc_auc, y_score) = classify_logistic(dataset, targets)
 print(final_score, roc_auc)

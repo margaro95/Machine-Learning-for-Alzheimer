@@ -4,6 +4,7 @@
 from sklearn.utils.extmath import softmax
 from sklearn.linear_model.base import LinearClassifierMixin
 from numpy.linalg import pinv
+from scipy.linalg import pinv2
 from numpy import (hstack, ones, size, dot, transpose, delete, c_, newaxis,
                    unique)
 from sklearn.exceptions import NotFittedError
@@ -19,7 +20,7 @@ class PseudoInverseRegression(LinearClassifierMixin):
         """Fit your data and create the output vector."""
         bias = ones((size(X, 0), 1))
         X = hstack((bias, X))
-        W = dot(pinv(X), y)
+        W = dot(pinv2(X), y)
         self.classes_ = unique(y)
         self.coef_ = transpose(delete(W, 0, 0))[newaxis]
         self.intercept_ = W[0]

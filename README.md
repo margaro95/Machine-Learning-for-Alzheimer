@@ -127,7 +127,7 @@ incluyen el precuneus, la corteza entorrinal y el hipocampo, que son de
 las más implicadas al principio del Alzheimer, y que se sabe que tienen
 afectadas la conectividad. Los números de las áreas en el atlas son
 
-2526313233343738616267688586
+25-26-31-32-33-34-37-38-61-62-67-68-85-86
 
 Con lo que la submatriz que te quedaría sería (14x14) cogiendo solo esas
 filas/columnas. Es una reducción notable (de más de 4000 elementos en
