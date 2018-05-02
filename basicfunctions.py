@@ -33,7 +33,7 @@ def toControl():
 def toProjectFolder():
     """Change directory to project folder."""
     chdir("/media/marcos/Datos/Atom_Git_Projects/"
-          "Machine Learning for Alzheimer")
+          "Machine_Learning_for_Alzheimer")
 
 
 def set_seed(Seed=None):
