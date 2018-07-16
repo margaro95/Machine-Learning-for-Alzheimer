@@ -19,9 +19,6 @@ def ensemble_build(ensembles):
     from classificators import classify_pseudoinverse, classify_logistic
     import pdb
 
-    dataset = load("dataset_alzheimer.npy")
-    src_dataset = addaptDataset(dataset, array([9*30, 9*30, 9*29]), 4005, 16, 9)
-    targets = createTargets_DCLvsControl(array([30*9, 30*9, 29*9]), 16, 9)
     dataset = dataset - mean(dataset, axis=0)
     pca = PCA()
     src_dataset = pca.fit(src_dataset).transform(src_dataset)

@@ -11,21 +11,22 @@ images.
 from basicfunctions import toDCL, toQSM, toControl
 from os import listdir
 from createImage import createImage
+import pdb
 
 nbands = 9
-w, h = 89, 45
+h, w = 89, 45
 
 toDCL()
 for i in range(len(listdir())):
     for j in range(nbands):
-        createImage(listdir()[i], j, w, h)
-
+        createImage(listdir()[i], j, h, w)
+        pdb.set_trace()
 toQSM()
 for i in range(len(listdir())):
     for j in range(nbands):
-        createImage(listdir()[i], j, w, h)
+        createImage(listdir()[i], j, h, w)
 
 toControl()
 for i in range(len(listdir())):
     for j in range(nbands):
-        createImage(listdir()[i], j, w, h)
+        createImage(listdir()[i], j, h, w)

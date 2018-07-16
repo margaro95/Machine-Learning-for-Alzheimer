@@ -14,7 +14,7 @@ from numpy import ones, array
 import matplotlib.pyplot as plt
 import pdb
 
-from classification_models import PseudoInverseRegression
+from classification_models import PseudoInverseRegression, BigEnsemble
 
 
 def run_crossvalidation_with_ROC(func):
@@ -144,5 +144,18 @@ def classify_naivebayes(train_dataset, train_targets, test_dataset,
     modelo.fit(train_dataset, train_targets)
     prediction = modelo.predict(test_dataset)
     scored = modelo.score(test_dataset, test_target)
+    probas = modelo.predict_proba(test_dataset)
+    return(prediction, scored, probas)
+
+
+@run_crossvalidation_with_ROC
+def classify_bigensemble(train_dataset, train_targets, test_dataset,
+                         test_target):
+    """Classify test via an ensemble of classifiers."""
+    modelo = BigEnsemble()
+    modelo.fit(train_dataset, train_targets)
+    prediction = modelo.predict(test_dataset)
+    #scored = modelo.score(test_dataset, test_target)
+    scored = 0
     probas = modelo.predict_proba(test_dataset)
     return(prediction, scored, probas)

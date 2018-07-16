@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 """This module creates everything related to datasets to be used in sklearn."""
 from os import listdir
+import pandas as pd
 from numpy import asarray, concatenate, arange, newaxis
+import numpy as np
 
-from basicfunctions import toDCL, toQSM, toControl
+from basicfunctions import toDCL, toQSM, toControl, toProjectFolder
 from createVector import createVector, createVector_ernesto
+import pdb
 
 
 def createDataset(ernesto=False):
@@ -16,7 +19,6 @@ def createDataset(ernesto=False):
     patients (dataset[30:59,:]) and the last 29 patients are the control group
     (dataset[60:,:]). Patients are ordered the same way the function listdir
     orders them. Bands within each patient are ordered from Delta to HighGamma2
-    TODO -> create datasets including just some of the bands
     """
     nbands = 9
     # npatients = 30 + 30 + 29  # DCL + QSM + Control
@@ -29,7 +31,7 @@ def createDataset(ernesto=False):
             if ernesto:
                 dataset.append(list(createVector_ernesto(listdir()[i], j)))
             else:
-                dataset.append(list(createVector(listdir()[i], j)))
+                dataset.append(list(createVector(listdir()[i], j, vector=True)))
 
     toQSM()
     for i in range(len(listdir())):
@@ -37,7 +39,7 @@ def createDataset(ernesto=False):
             if ernesto:
                 dataset.append(list(createVector_ernesto(listdir()[i], j)))
             else:
-                dataset.append(list(createVector(listdir()[i], j)))
+                dataset.append(list(createVector(listdir()[i], j, vector=True)))
 
     toControl()
     for i in range(len(listdir())):
@@ -45,8 +47,9 @@ def createDataset(ernesto=False):
             if ernesto:
                 dataset.append(list(createVector_ernesto(listdir()[i], j)))
             else:
-                dataset.append(list(createVector(listdir()[i], j)))
+                dataset.append(list(createVector(listdir()[i], j, vector=True)))
 
+    toProjectFolder()
     dataset = asarray(dataset)
     return(dataset)
 
@@ -126,6 +129,27 @@ def addaptDataset(src_dataset, Ningroup, nfeatures, configuration, nbands):
                               arange(nfeatures)]
 
     return(dataset)
+
+
+def createDataset_pandas(ernesto=False):
+    """Change the ndarray that createDataset returns into a pd_dataframe."""
+    number_patients = 89
+    number_bands = 9
+    band_names = ['Delta', 'Theta', 'Alpha', 'Beta1', 'Beta2',
+                  'Beta', 'Gamma', 'HighGamma1', 'HighGamma2']
+
+    dataset = createDataset()
+
+    dataframe = pd.DataFrame(index=range(0, 89),
+                             columns=range(4005 * number_bands))
+
+    for i in range(number_patients):
+        for j in range(number_bands):
+            dataframe.iloc[i][4005*j:4005*(j+1)] = dataset[i*number_bands + j, :]
+
+    toProjectFolder()
+    np.save('dataset_alzheimer_pandas.npy', dataframe.values)
+    return(dataframe)
 
 
 def nonlinear_expand(src_dataset, seed, g):

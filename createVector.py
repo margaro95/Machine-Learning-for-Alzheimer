@@ -6,7 +6,7 @@ from numpy import triu, ones, array, newaxis
 from basicfunctions import readdata
 
 
-def createVector(file, band):
+def createVector(file, band, vector=False):
     """Create the feature input vector for the ML algorithm.
 
     The band input to the function should be 0 for "Delta" band,
@@ -26,7 +26,10 @@ def createVector(file, band):
     """
     mask = triu(ones((90, 90), dtype=bool), 1)
     matrix = readdata(file)["plv"][0, band][4]
-    vector = matrix[mask]
+    if vector is True:
+        vector = matrix[mask]
+    else:
+        vector = matrix
     return(vector)
 
 
